@@ -1,21 +1,27 @@
 import express from 'express'
 import { config } from 'dotenv'
-import { MongoClient } from 'mongodb'
+import mongoose from 'mongoose'
+// import routes
+import userRoutes from './routes/users'
 
 config()
 
 const app = express()
 
-MongoClient.connect(process.env.DATABASE_URL!, (error, client) => {
-  if (error) throw error
-  const db = client?.db('cuteel')
-  db?.collection('test')
-    .find()
-    .toArray((error, res) => {
-      if (error) throw error
-      console.log(res)
-    })
-})
+mongoose.connect(
+  process.env.DATABASE_URL!,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  (error) => {
+    if (error) {
+      console.log('Error connecting to MongoDB')
+    } else {
+      console.log('Connected  successfully to MongoDB!')
+    }
+  }
+)
+
+// route middleware
+app.use('/users', userRoutes)
 
 app.get('/', (req, res) => {
   res.json({ data: 'hello' })
