@@ -1,4 +1,7 @@
 import express from 'express'
+import { config } from 'dotenv'
+
+config()
 
 const app = express()
 
@@ -6,8 +9,6 @@ app.get('/', (req, res) => {
   res.json({ data: 'hello' })
 })
 
-const PORT = 8080
-
-app.listen(PORT, () => {
-  console.log(`App started at port ${PORT}`)
+app.listen(process.env.PORT, () => {
+  console.log(`App started at port ${process.env.PORT}`)
 })
