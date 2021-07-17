@@ -1,6 +1,9 @@
 import express from 'express'
 import { config } from 'dotenv'
-import mongoose from 'mongoose'
+import { connect } from 'mongoose'
+import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
+
 // import routes
 import userRoutes from './routes/user'
 
@@ -8,7 +11,7 @@ config()
 
 const app = express()
 
-mongoose.connect(
+connect(
   process.env.DATABASE_URL!,
   { useNewUrlParser: true, useUnifiedTopology: true },
   (error) => {
@@ -19,6 +22,11 @@ mongoose.connect(
     }
   }
 )
+
+// middlewares
+app.use(morgan('dev'))
+app.use(express.json())
+app.use(cookieParser())
 
 // route middleware
 app.use('/users', userRoutes)
