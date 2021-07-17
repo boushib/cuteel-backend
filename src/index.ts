@@ -2,7 +2,7 @@ import express from 'express'
 import { config } from 'dotenv'
 import mongoose from 'mongoose'
 // import routes
-import userRoutes from './routes/users'
+import userRoutes from './routes/user'
 
 config()
 
