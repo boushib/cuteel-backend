@@ -3,5 +3,6 @@ export const formatMongoError = (error: any) => {
     const field = Object.keys(error.keyPattern)[0]
     return `An account with this ${field} already exists!`
   }
-  return 'Error saving data to database'
+  // return 'Error saving data to database'
+  return error
 }
