@@ -48,3 +48,9 @@ export const signout = (req: Request, res: Response) => {
   res.clearCookie('token')
   res.json({ message: 'Signed Out Successfully!' })
 }
+
+export const requireAuthentication = expressJwt({
+  secret: `${process.env.JWT_SECRET!}`,
+  userProperty: 'auth',
+  algorithms: [],
+})
