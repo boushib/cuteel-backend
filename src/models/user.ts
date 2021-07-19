@@ -98,6 +98,9 @@ userSchema.methods = {
       return ''
     }
   },
+  authenticate: function (this: any, password) {
+    return this.encryptPassword(password) === this.hashedPassword
+  },
 }
 
 export default model('User', userSchema)

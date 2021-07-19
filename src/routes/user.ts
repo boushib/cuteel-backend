@@ -1,9 +1,10 @@
 import { Router } from 'express'
-import { signup } from '../controllers/user'
-import { signupValidator } from '../validators'
+import { signup, signin } from '../controllers/user'
+import { signupValidator, signinValidator } from '../validators'
 
 const router = Router()
 
-router.post('/', signupValidator, signup)
+router.post('/signup', signupValidator, signup)
+router.post('/signin', signinValidator, signin)
 
 export default router
