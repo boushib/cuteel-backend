@@ -42,14 +42,9 @@ export const signin = (req: Request, res: Response) => {
     const { _id, name, email, roles } = user
     res.status(200).json({ token, user: { _id, name, email, roles } })
   })
-  // const errors = validationResult(req)
-  //   .array()
-  //   .map((err) => err.msg)
+}
 
-  // if (err || errors.length) {
-  //   let error = ''
-  //   if (errors?.length) error = errors[0]
-  //   if (err) error = formatMongoError(err)
-  //   return res.status(400).json({ error })
-  // }
+export const signout = (req: Request, res: Response) => {
+  res.clearCookie('token')
+  res.json({ message: 'Signed Out Successfully!' })
 }
