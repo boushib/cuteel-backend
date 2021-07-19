@@ -4,7 +4,7 @@ import {
   signin,
   signout,
   requireAuthentication,
-} from '../controllers/user'
+} from '../controllers/auth'
 import { signupValidator, signinValidator } from '../validators'
 
 const router = Router()

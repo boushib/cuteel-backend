@@ -5,7 +5,7 @@ import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 
 // import routes
-import userRoutes from './routes/user'
+import authRoutes from './routes/auth'
 
 config()
 
@@ -29,7 +29,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 // route middleware
-app.use('/users', userRoutes)
+app.use('/auth', authRoutes)
 
 app.get('/', (req, res) => {
   res.json({ data: 'hello' })
