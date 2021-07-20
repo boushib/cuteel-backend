@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 
 // import routes
 import authRoutes from './routes/auth'
+import userRoutes from './routes/user'
 
 config()
 
@@ -30,6 +31,7 @@ app.use(cookieParser())
 
 // route middleware
 app.use('/auth', authRoutes)
+app.use('/', userRoutes)
 
 app.get('/', (req, res) => {
   res.json({ data: 'hello' })
