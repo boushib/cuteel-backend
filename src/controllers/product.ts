@@ -5,7 +5,6 @@ import { readFileSync } from 'fs'
 
 export const createProduct = (req: Request, res: Response) => {
   const form = new IncomingForm({ keepExtensions: true })
-  console.log('CREATE 1...')
   form.parse(req, (error, fields, files) => {
     if (error) {
       return res.status(400).json({ error })
@@ -41,6 +40,22 @@ export const createProduct = (req: Request, res: Response) => {
       return res.status(201).json({ product })
     })
   })
+}
+
+export const updateProduct = (req: Request, res: Response) => {
+  Product.findOneAndUpdate(
+    { _id: req.params.id },
+    req.body,
+    { new: true },
+    (error, product) => {
+      if (error) {
+        return res.status(400).json({ error })
+      }
+      return res
+        .status(201)
+        .json({ product: { ...product._doc, image: undefined } })
+    }
+  )
 }
 
 export const getProducts = (req: Request, res: Response) => {
