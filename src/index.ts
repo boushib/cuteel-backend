@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser'
 import authRoutes from './routes/auth'
 import userRoutes from './routes/user'
 import categoryRoutes from './routes/category'
+import productRoutes from './routes/product'
 
 config()
 
@@ -32,8 +33,8 @@ app.use(cookieParser())
 
 // route middleware
 app.use('/auth', authRoutes)
-app.use('/', userRoutes)
-app.use('/', categoryRoutes)
+app.use('/', [userRoutes, categoryRoutes, productRoutes])
+// app.use('/', categoryRoutes)
 
 app.listen(process.env.PORT, () => {
   console.log(`App started at port ${process.env.PORT}`)
