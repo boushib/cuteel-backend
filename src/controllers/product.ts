@@ -47,7 +47,7 @@ export const getProducts = (req: Request, res: Response) => {
   res.status(201).json({ products: [] })
 }
 
-export const getProductById = (req: Request, res: Response) => {
+export const getProduct = (req: Request, res: Response) => {
   const { id } = req.params
   Product.findById(id, (error: any, product: any) => {
     if (error) {
@@ -57,5 +57,14 @@ export const getProductById = (req: Request, res: Response) => {
       return res.status(404).json({ error: 'This product might not exist!' })
     }
     res.json({ product: { ...product._doc, image: undefined } })
+  })
+}
+
+export const deleteProduct = (req: Request, res: Response) => {
+  Product.remove({ _id: req.params.id }, (error: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    res.json({ message: 'Product successfully deleted!' })
   })
 }
