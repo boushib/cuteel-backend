@@ -5,6 +5,7 @@ import { readFileSync } from 'fs'
 
 export const createProduct = (req: Request, res: Response) => {
   const form = new IncomingForm({ keepExtensions: true })
+  console.log('CREATE 1...')
   form.parse(req, (error, fields, files) => {
     if (error) {
       return res.status(400).json({ error })
@@ -14,6 +15,21 @@ export const createProduct = (req: Request, res: Response) => {
     const img: any = files.image
 
     if (img) {
+      const type = img.type.split('/')[1]
+      const allowedTypes = ['jpeg', 'png']
+
+      if (!allowedTypes.includes(type)) {
+        return res
+          .status(400)
+          .json({ error: 'Please upload a supported image!' })
+      }
+
+      if (img.size > 2000000) {
+        return res
+          .status(400)
+          .json({ error: 'Image size should be less than 2mb' })
+      }
+
       product.image.data = readFileSync(img.path)
       product.image.contentType = img.type
     }
