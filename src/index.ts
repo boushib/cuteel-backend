@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 import { connect } from 'mongoose'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 // import routes
 import authRoutes from './routes/auth'
@@ -30,6 +31,7 @@ connect(
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
+app.use(cors())
 
 // route middleware
 app.use('/auth', authRoutes)
