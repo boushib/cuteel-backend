@@ -12,5 +12,10 @@ export const createCategory = (req: Request, res: Response) => {
 }
 
 export const getCategories = (req: Request, res: Response) => {
-  res.json({ data: 'Categories..' })
+  Category.find((error, categories) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    res.json({ categories })
+  })
 }
