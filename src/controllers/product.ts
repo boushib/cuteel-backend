@@ -59,7 +59,15 @@ export const updateProduct = (req: Request, res: Response) => {
 }
 
 export const getProducts = (req: Request, res: Response) => {
-  res.status(201).json({ products: [] })
+  Product.find((error: any, data: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    const products = [
+      ...data.map((p: any) => ({ ...p._doc, image: undefined })),
+    ]
+    res.json({ products })
+  })
 }
 
 export const getProduct = (req: Request, res: Response) => {
