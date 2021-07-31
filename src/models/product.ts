@@ -4,12 +4,12 @@ const productSchema = new Schema(
   {
     name: {
       type: String,
-      tim: true,
+      trim: true,
       required: true,
     },
     description: {
       type: String,
-      tim: true,
+      trim: true,
       required: true,
       maxLength: 2000,
     },
@@ -26,8 +26,11 @@ const productSchema = new Schema(
       type: Number,
     },
     image: {
-      contentType: String,
-      data: Buffer,
+      // contentType: String,
+      // data: Buffer,
+      type: String,
+      trim: true,
+      required: true,
     },
   },
   { timestamps: true }

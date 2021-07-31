@@ -59,13 +59,10 @@ export const updateProduct = (req: Request, res: Response) => {
 }
 
 export const getProducts = (req: Request, res: Response) => {
-  Product.find((error: any, data: any) => {
+  Product.find((error: any, products: any) => {
     if (error) {
       return res.status(400).json({ error })
     }
-    const products = [
-      ...data.map((p: any) => ({ ...p._doc, image: undefined })),
-    ]
     res.json({ products })
   })
 }
@@ -79,7 +76,7 @@ export const getProduct = (req: Request, res: Response) => {
     if (!product) {
       return res.status(404).json({ error: 'This product might not exist!' })
     }
-    res.json({ product: { ...product._doc, image: undefined } })
+    res.json({ product })
   })
 }
 
