@@ -2,7 +2,7 @@ import { model, Schema, Types } from 'mongoose'
 
 const ticketSchema = new Schema(
   {
-    title: {
+    subject: {
       type: String,
       trim: true,
       required: true,
