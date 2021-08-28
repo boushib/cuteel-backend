@@ -13,9 +13,7 @@ import productRoutes from './routes/product'
 import ticketRoutes from './routes/ticket'
 
 config()
-
 const app = express()
-
 connect(
   process.env.DATABASE_URL!,
   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
@@ -29,6 +27,7 @@ connect(
 )
 
 // middlewares
+app.use('/uploads', express.static('uploads'))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())

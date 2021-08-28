@@ -6,10 +6,11 @@ import {
   updateProduct,
   deleteProduct,
 } from '../controllers/product'
+import { upload } from '../utils'
 
 const router = Router()
 
-router.post('/products/create', createProduct)
+router.post('/products/create', upload.single('image'), createProduct)
 router.get('/products', getProducts)
 router.get('/products/:id', getProduct)
 router.put('/products/:id', updateProduct)
