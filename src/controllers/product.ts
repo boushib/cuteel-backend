@@ -66,12 +66,28 @@ export const updateProduct = (req: Request, res: Response) => {
 }
 
 export const getProducts = (req: Request, res: Response) => {
-  Product.find((error: any, products: any) => {
-    if (error) {
-      return res.status(400).json({ error })
-    }
-    res.json({ products })
-  })
+  const { q } = req.query
+  if (q) {
+    const regex = { $regex: q, $options: 'i' }
+    Product.find(
+      {
+        $or: [{ name: regex }, { description: regex }],
+      },
+      (error: any, products: any) => {
+        if (error) {
+          return res.status(400).json({ error })
+        }
+        res.json({ products })
+      }
+    )
+  } else {
+    Product.find((error: any, products: any) => {
+      if (error) {
+        return res.status(400).json({ error })
+      }
+      res.json({ products })
+    })
+  }
 }
 
 export const getProduct = (req: Request, res: Response) => {
