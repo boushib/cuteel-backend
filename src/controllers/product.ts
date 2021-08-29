@@ -5,7 +5,12 @@ export const createProduct = (req: Request, res: Response) => {
   const { name, description, price, category, quantity } = req.body
   const image = req.file?.path
   const product = new Product({
-    name, description, price, category, quantity, image
+    name,
+    description,
+    price,
+    category,
+    quantity,
+    image,
   })
   product.save((error: any, product: any) => {
     if (error) {
@@ -16,17 +21,22 @@ export const createProduct = (req: Request, res: Response) => {
 }
 
 export const updateProduct = (req: Request, res: Response) => {
+  const image = req.file?.path
+  const fieldsToUpdate = { ...req.body }
+  if (image) fieldsToUpdate.image = image
+  Object.keys(fieldsToUpdate).map((k) => {
+    if (!k) delete fieldsToUpdate[k]
+  })
+  console.log(fieldsToUpdate)
   Product.findOneAndUpdate(
     { _id: req.params.id },
-    req.body,
+    fieldsToUpdate,
     { new: true },
     (error, product) => {
       if (error) {
         return res.status(400).json({ error })
       }
-      return res
-        .status(201)
-        .json({ product: { ...product._doc, image: undefined } })
+      return res.status(201).json({ product })
     }
   )
 }

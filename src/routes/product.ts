@@ -13,7 +13,7 @@ const router = Router()
 router.post('/products/create', upload.single('image'), createProduct)
 router.get('/products', getProducts)
 router.get('/products/:id', getProduct)
-router.put('/products/:id', updateProduct)
+router.put('/products/:id', upload.single('image'), updateProduct)
 router.delete('/products/:id', deleteProduct)
 
 export default router

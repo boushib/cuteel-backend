@@ -16,7 +16,12 @@ config()
 const app = express()
 connect(
   process.env.DATABASE_URL!,
-  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  },
   (error) => {
     if (error) {
       console.log('Error connecting to MongoDB')
