@@ -1,44 +1,6 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Types } from 'mongoose'
 import { createHmac } from 'crypto'
 import { v4 as uuid } from 'uuid'
-
-// interface IUser extends Document {
-//   name: {
-//     type: String
-//     trim: true
-//     required: true
-//     maxlength: 32
-//   }
-//   email: {
-//     type: String
-//     trim: true
-//     required: true
-//     unique: true
-//   }
-//   hashedPassword: {
-//     type: String
-//     required: true
-//   }
-//   _password: String
-//   about: {
-//     type: String
-//     trim: true
-//   }
-//   salt: String
-//   roles: {
-//     type: [String]
-//     default: ['user']
-//   }
-//   history: {
-//     type: Array<any>
-//     default: []
-//   }
-//   // encryptPassword: (password: String) => String
-//   encryptPassword: (password: String) => {
-//     type: String
-//     required: true
-//   }
-// }
 
 const userSchema = new Schema(
   {
@@ -67,10 +29,18 @@ const userSchema = new Schema(
       type: [String],
       default: ['user'],
     },
-    history: {
-      type: Array,
-      default: [],
-    },
+    products: [
+      {
+        type: Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
+    orders: [
+      {
+        type: Types.ObjectId,
+        ref: 'Order',
+      },
+    ],
   },
   { timestamps: true }
 )

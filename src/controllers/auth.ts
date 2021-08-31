@@ -37,16 +37,18 @@ export const signin = (req: Request, res: Response) => {
     }
 
     // generate signed token with user id and secret
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
-      expiresIn: '3d',
-    })
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET!,
+      { expiresIn: '3d' }
+    )
     res.cookie('token', token, {
       expires: new Date(Date.now() + 10800),
       httpOnly: true,
       // secure: true // https
     })
     const { _id, name, email, roles } = user
-    res.json({ _id, name, email, roles })
+    res.json({ user: { _id, name, email, roles }, token })
   })
 }
 
