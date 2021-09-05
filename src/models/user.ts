@@ -16,6 +16,10 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
+    avatar: {
+      type: String,
+      trim: true,
+    },
     hashedPassword: {
       type: String,
       required: true,

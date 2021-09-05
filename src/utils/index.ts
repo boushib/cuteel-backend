@@ -1,3 +1,4 @@
+export * from './auth'
 export * from './multer'
 
 export const formatMongoError = (error: any) => {

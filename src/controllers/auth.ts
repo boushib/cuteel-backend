@@ -47,8 +47,8 @@ export const signin = (req: Request, res: Response) => {
       httpOnly: true,
       // secure: true // https
     })
-    const { _id, name, email, roles } = user
-    res.json({ user: { _id, name, email, roles }, token })
+    const { _id, name, email, roles, avatar } = user
+    res.json({ user: { _id, name, email, avatar, roles }, token })
   })
 }
 

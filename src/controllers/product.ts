@@ -27,7 +27,6 @@ export const updateProduct = (req: Request, res: Response) => {
   Object.keys(fieldsToUpdate).map((k) => {
     if (!k) delete fieldsToUpdate[k]
   })
-  console.log(fieldsToUpdate)
   Product.findOneAndUpdate(
     { _id: req.params.id },
     fieldsToUpdate,
@@ -43,6 +42,7 @@ export const updateProduct = (req: Request, res: Response) => {
 
 export const getProducts = (req: Request, res: Response) => {
   const { q } = req.query
+  console.log({ userId: req.user })
   if (q) {
     const regex = { $regex: q, $options: 'i' }
     Product.find(

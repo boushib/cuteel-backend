@@ -11,6 +11,26 @@ export const getUserById = (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Cannot find a user with this id' })
     }
     const profile = { ...user._doc, salt: undefined, hashedPassword: undefined }
-    res.json({ profile })
+    res.json({ user: profile })
   })
+}
+
+export const updateUser = (req: Request, res: Response) => {
+  const avatar = req.file?.path
+  const fieldsToUpdate = { ...req.body }
+  if (avatar) fieldsToUpdate.avatar = avatar
+  Object.keys(fieldsToUpdate).map((k) => {
+    if (!k) delete fieldsToUpdate[k]
+  })
+  User.findOneAndUpdate(
+    { _id: req.params.id },
+    fieldsToUpdate,
+    { new: true },
+    (error, user) => {
+      if (error) {
+        return res.status(400).json({ error })
+      }
+      return res.status(201).json({ user })
+    }
+  )
 }
