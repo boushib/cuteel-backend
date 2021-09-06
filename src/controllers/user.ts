@@ -15,6 +15,34 @@ export const getUserById = (req: Request, res: Response) => {
   })
 }
 
+export const getUsers = (req: Request, res: Response) => {
+  User.find((error: any, usersDoc: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    const users = usersDoc.map((user: any) => ({
+      ...user._doc,
+      salt: undefined,
+      hashedPassword: undefined,
+    }))
+    res.json({ users })
+  })
+}
+
+export const getCustomers = (req: Request, res: Response) => {
+  User.find({ roles: ['user'] }, (error: any, usersDoc: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    const users = usersDoc.map((user: any) => ({
+      ...user._doc,
+      salt: undefined,
+      hashedPassword: undefined,
+    }))
+    res.json({ users })
+  })
+}
+
 export const updateUser = (req: Request, res: Response) => {
   const avatar = req.file?.path
   const fieldsToUpdate = { ...req.body }
