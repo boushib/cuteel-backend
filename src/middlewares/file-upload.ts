@@ -13,8 +13,13 @@ const storage = multer.diskStorage({
     cb(null, './uploads/')
   },
   filename: (req, file, cb) => {
-    const name = new Date().toISOString() + file.originalname.split(' ').join('-')
+    const name =
+      new Date().toISOString() + file.originalname.split(' ').join('-')
     cb(null, name)
   },
 })
-export const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter })
+export const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter,
+})

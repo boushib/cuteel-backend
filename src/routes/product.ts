@@ -6,14 +6,15 @@ import {
   updateProduct,
   deleteProduct,
 } from '../controllers/product'
-import { useAuth, upload } from '../utils'
+import { upload } from '../middlewares'
+import { useAuth } from '../middlewares'
 
 const router = Router()
 
 router.post('/products/create', useAuth, upload.single('image'), createProduct)
 router.get('/products', getProducts)
 router.get('/products/:id', getProduct)
-router.put('/products/:id', upload.single('image'), updateProduct)
-router.delete('/products/:id', deleteProduct)
+router.put('/products/:id', useAuth, upload.single('image'), updateProduct)
+router.delete('/products/:id', useAuth, deleteProduct)
 
 export default router

@@ -1,6 +1,3 @@
-export * from './auth'
-export * from './multer'
-
 export const formatMongoError = (error: any) => {
   if (error.code === 11000) {
     const field = Object.keys(error.keyPattern)[0]
