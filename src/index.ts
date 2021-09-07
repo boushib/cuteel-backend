@@ -11,6 +11,8 @@ import userRoutes from './routes/user'
 import categoryRoutes from './routes/category'
 import productRoutes from './routes/product'
 import ticketRoutes from './routes/ticket'
+import { createInvoice } from './utils'
+import { INVOICE } from './constants'
 
 config()
 const app = express()
@@ -33,10 +35,13 @@ connect(
 
 // middlewares
 app.use('/uploads', express.static('uploads'))
+app.use('/documents', express.static('documents'))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
+
+createInvoice(INVOICE)
 
 // route middleware
 app.use('/auth', authRoutes)
