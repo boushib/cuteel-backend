@@ -3,11 +3,9 @@ import { randomBytes } from 'crypto'
 import multer from 'multer'
 import multerS3 from 'multer-s3'
 
-const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } = process.env
-
 const s3 = new S3({
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 })
 
 const storage = multerS3({
@@ -25,5 +23,3 @@ const storage = multerS3({
 })
 
 export const uploadToS3 = multer({ storage })
-
-//AWS.config.update({ region: 'us-west-2' })
