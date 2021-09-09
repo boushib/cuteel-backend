@@ -3,7 +3,8 @@ import Product from '../models/product'
 
 export const createProduct = (req: Request, res: Response) => {
   const { name, description, price, category, quantity } = req.body
-  const image = req.file?.path
+  const file = req.file as Express.MulterS3.File
+  const image = file.location
   const product = new Product({
     name,
     description,

@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/express-jwt": "^6.0.2",
     "@types/jsonwebtoken": "^8.5.4",
+    "aws-sdk": "^2.986.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -21,6 +22,7 @@
     "mongoose": "^5.13.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.3",
+    "multer-s3": "^2.9.0",
     "pdfkit": "^0.12.3",
     "uuid": "^8.3.2"
   },
@@ -31,6 +33,7 @@
     "@types/formidable": "^1.2.3",
     "@types/morgan": "^1.9.3",
     "@types/multer": "^1.4.7",
+    "@types/multer-s3": "^2.7.10",
     "@types/node": "^16.3.3",
     "@types/pdfkit": "^0.11.2",
     "@types/uuid": "^8.3.1",
