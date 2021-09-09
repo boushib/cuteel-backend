@@ -1,80 +1,109 @@
 import { randomBytes } from 'crypto'
 import { createWriteStream, existsSync } from 'fs'
 import PDFKit from 'pdfkit'
-import { Invoice } from '../types'
+import {
+  Invoice,
+  InvoiceDate,
+  InvoiceHeader,
+  InvoiceItem,
+  ShippingAddress,
+} from '../types'
 
 export const createInvoice = (invoice: Invoice, path?: string) => {
   const doc = new PDFKit({ size: 'A4', margin: 40 })
 
-  header(doc, invoice)
-  customerInformation(doc, invoice)
-  invoiceTable(doc, invoice)
-  footer(doc, invoice)
+  createHeader(doc, invoice.header)
+  createCustomerInfo(
+    doc,
+    invoice.shippingAddress,
+    invoice.date,
+    invoice.orderNumber
+  )
+  createInvoiceTable(
+    doc,
+    invoice.items,
+    invoice.subtotal,
+    invoice.total,
+    invoice.currencySymbol
+  )
+  createFooter(doc, invoice.footer.text)
 
   doc.end()
   const filePath = path ?? `documents/${randomBytes(16).toString('hex')}.pdf`
   doc.pipe(createWriteStream(filePath))
 }
 
-const header = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
-  if (existsSync(invoice.header.company_logo)) {
+const createHeader = (doc: PDFKit.PDFDocument, header: InvoiceHeader) => {
+  const { companyName, companyAddress } = header
+  const companyLogo =
+    __dirname.substring(0, __dirname.length - 9) + 'static/cuteel.png'
+  if (existsSync(companyLogo)) {
     doc
-      .image(invoice.header.company_logo, 50, 45, { width: 50 })
+      .image(companyLogo, 50, 45, { width: 50 })
       .fontSize(20)
-      .text(invoice.header.company_name, 110, 57)
+      .text(companyName, 110, 57)
       .moveDown()
   } else {
-    doc.fontSize(20).text(invoice.header.company_name, 50, 45).moveDown()
+    doc.fontSize(20).text(companyName, 50, 45).moveDown()
   }
 
-  if (invoice.header.company_address.length !== 0) {
-    companyAddress(doc, invoice.header.company_address)
+  if (companyAddress.length !== 0) {
+    createCompanyAddress(doc, companyAddress)
   }
 }
 
-const customerInformation = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
+const createCustomerInfo = (
+  doc: PDFKit.PDFDocument,
+  shippingAddress: ShippingAddress,
+  date: InvoiceDate,
+  orderNumber: number
+) => {
   doc.fillColor('#444444').fontSize(20).text('Invoice', 50, 160)
 
-  generateHr(doc, 185)
+  createHorizontalLine(doc, 185)
 
   const customerInformationTop = 200
+
+  const { name, address, city, state, country, postalCode } = shippingAddress
+  const { billingDate, dueDate } = date
 
   doc
     .fontSize(10)
     .text('Invoice Number:', 50, customerInformationTop)
     .font('Helvetica-Bold')
-    .text(invoice.order_number.toString(), 150, customerInformationTop)
+    .text(orderNumber.toString(), 150, customerInformationTop)
     .font('Helvetica')
     .text('Billing Date:', 50, customerInformationTop + 15)
-    .text(invoice.date.billing_date, 150, customerInformationTop + 15)
+    .text(billingDate, 150, customerInformationTop + 15)
     .text('Due Date:', 50, customerInformationTop + 30)
-    .text(invoice.date.due_date, 150, customerInformationTop + 30)
+    .text(dueDate, 150, customerInformationTop + 30)
 
     .font('Helvetica-Bold')
-    .text(invoice.shipping.name, 300, customerInformationTop)
+    .text(name, 300, customerInformationTop)
     .font('Helvetica')
-    .text(invoice.shipping.address, 300, customerInformationTop + 15)
+    .text(address, 300, customerInformationTop + 15)
     .text(
-      invoice.shipping.city +
-        ', ' +
-        invoice.shipping.state +
-        ', ' +
-        invoice.shipping.country,
+      `${city}, ${state ? state + ', ' : ''}${country}, ${postalCode}`,
       300,
       customerInformationTop + 30
     )
     .moveDown()
 
-  generateHr(doc, 252)
+  createHorizontalLine(doc, 252)
 }
 
-const invoiceTable = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
+const createInvoiceTable = (
+  doc: PDFKit.PDFDocument,
+  items: Array<InvoiceItem>,
+  subtotal: number,
+  total: number,
+  currencySymbol: string
+) => {
   let i
   const invoiceTableTop = 330
-  const currencySymbol = invoice.currency_symbol
 
   doc.font('Helvetica-Bold')
-  tableRow(
+  createTableRow(
     doc,
     invoiceTableTop,
     'Item',
@@ -84,13 +113,13 @@ const invoiceTable = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
     'Total',
     'Tax'
   )
-  generateHr(doc, invoiceTableTop + 20)
+  createHorizontalLine(doc, invoiceTableTop + 20)
   doc.font('Helvetica')
 
-  for (i = 0; i < invoice.items.length; i++) {
-    const item = invoice.items[i]
+  for (i = 0; i < items.length; i++) {
+    const item = items[i]
     const position = invoiceTableTop + (i + 1) * 30
-    tableRow(
+    createTableRow(
       doc,
       position,
       item.item,
@@ -104,7 +133,7 @@ const invoiceTable = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
       checkIfTaxAvailable(item.tax)
     )
 
-    generateHr(doc, position + 20)
+    createHorizontalLine(doc, position + 20)
   }
 
   const subtotalPosition = invoiceTableTop + (i + 1) * 30
@@ -113,7 +142,7 @@ const invoiceTable = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
     doc,
     subtotalPosition,
     'Subtotal',
-    formatCurrency(invoice.total, currencySymbol)
+    formatCurrency(subtotal, currencySymbol)
   )
 
   const paidToDatePosition = subtotalPosition + 20
@@ -122,15 +151,13 @@ const invoiceTable = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
     doc,
     paidToDatePosition,
     'Total',
-    formatCurrency(invoice.total, currencySymbol)
+    formatCurrency(total, currencySymbol)
   )
 }
 
-const footer = (doc: PDFKit.PDFDocument, invoice: Invoice) => {
-  if (invoice.footer.text.length !== 0) {
-    doc
-      .fontSize(10)
-      .text(invoice.footer.text, 50, 780, { align: 'center', width: 500 })
+const createFooter = (doc: PDFKit.PDFDocument, footer: string) => {
+  if (footer.length !== 0) {
+    doc.fontSize(10).text(footer, 50, 780, { align: 'center', width: 500 })
   }
 }
 
@@ -146,7 +173,7 @@ const totalTable = (
     .text(description, 0, position, { align: 'right' })
 }
 
-const tableRow = (
+const createTableRow = (
   doc: PDFKit.PDFDocument,
   position: number,
   item: string,
@@ -158,15 +185,15 @@ const tableRow = (
 ) => {
   doc
     .fontSize(10)
-    .text(item, 50, position)
-    .text(description, 130, position)
+    .text(item, 50, position, { width: 100 })
+    .text(description.substring(0, 30) + '..', 160, position, { width: 160 })
     .text(unitCost, 280, position, { width: 90, align: 'right' })
     .text(quantity, 335, position, { width: 90, align: 'right' })
     .text(lineTotal, 400, position, { width: 90, align: 'right' })
     .text(tax, 0, position, { align: 'right' })
 }
 
-const generateHr = (doc: PDFKit.PDFDocument, position: number) => {
+const createHorizontalLine = (doc: PDFKit.PDFDocument, position: number) => {
   doc
     .strokeColor('#aaaaaa')
     .lineWidth(1)
@@ -204,7 +231,7 @@ const applyTaxIfAvailable = (
   return price * quantity
 }
 
-const companyAddress = (doc: PDFKit.PDFDocument, address: string) => {
+const createCompanyAddress = (doc: PDFKit.PDFDocument, address: string) => {
   const str = address
   const chunks = str.match(/.{0,25}(\s|$)/g)
   let first = 50

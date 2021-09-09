@@ -1,10 +1,10 @@
-type ShippingAddress = {
+export type ShippingAddress = {
   name: string
   address: string
   city: string
   state: string
   country: string
-  postal_code: number
+  postalCode: number
 }
 export type InvoiceItem = {
   item: string
@@ -13,27 +13,27 @@ export type InvoiceItem = {
   price: number
   tax: string
 }
-type Header = {
-  company_name: string
-  company_logo: string
-  company_address: string
+export type InvoiceHeader = {
+  companyName: string
+  companyLogo: string
+  companyAddress: string
 }
-type Footer = {
+export type InvoiceFooter = {
   text: string
 }
-type InvoiceDate = {
-  billing_date: string
-  due_date: string
+export type InvoiceDate = {
+  billingDate: string
+  dueDate: string
 }
 
 export type Invoice = {
-  shipping: ShippingAddress
+  shippingAddress: ShippingAddress
   items: Array<InvoiceItem>
   subtotal: number
   total: number
-  order_number: number
-  header: Header
-  footer: Footer
-  currency_symbol: '$'
+  orderNumber: number
+  header: InvoiceHeader
+  footer: InvoiceFooter
+  currencySymbol: '$'
   date: InvoiceDate
 }

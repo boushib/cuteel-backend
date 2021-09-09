@@ -1,12 +1,12 @@
 import { Invoice } from '../types'
 
-const shipping = {
+const shippingAddress = {
   name: 'El Hassane Boushib',
   address: '458 Haj Fateh',
   city: 'Casablanca',
-  state: 'Casablanca',
+  state: '',
   country: 'Morocco',
-  postal_code: 22000,
+  postalCode: 22000,
 }
 const items = [
   {
@@ -25,25 +25,25 @@ const items = [
   },
 ]
 const header = {
-  company_name: 'Cuteel',
-  company_logo: 'logo.png',
-  company_address: 'Cuteel. 540 Gotham Street 34th floor LA, California',
+  companyName: 'Cuteel',
+  companyLogo: '../ig.png',
+  companyAddress: 'Cuteel. 540 Gotham Street 34th floor LA, California',
 }
 const footer = {
-  text: 'Footer goes here',
+  text: 'Cuteel LTD  •  https://cuteel.com/  •  contact@cuteel.com',
 }
 const date = {
-  billing_date: '08 Sept 2021',
-  due_date: '08 Sept 2021',
+  billingDate: '08 Sept 2021',
+  dueDate: '08 Sept 2021',
 }
 export const INVOICE: Invoice = {
-  shipping,
+  shippingAddress,
   items,
   subtotal: 2335,
   total: 3125,
-  order_number: 894,
+  orderNumber: 894,
   header,
   footer,
-  currency_symbol: '$',
+  currencySymbol: '$',
   date,
 }
