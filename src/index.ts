@@ -41,7 +41,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
 
-createInvoice(INVOICE)
+//createInvoice(INVOICE)
 
 // route middleware
 app.use('/auth', authRoutes)
