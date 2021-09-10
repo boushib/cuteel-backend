@@ -14,12 +14,17 @@ const router = Router()
 router.post(
   '/products/create',
   useAuth,
-  uploadToS3.single('image'),
+  uploadToS3('images/products/').single('image'),
   createProduct
 )
 router.get('/products', getProducts)
 router.get('/products/:id', getProduct)
-router.put('/products/:id', useAuth, uploadToS3.single('image'), updateProduct)
+router.put(
+  '/products/:id',
+  useAuth,
+  uploadToS3('images/products/').single('image'),
+  updateProduct
+)
 router.delete('/products/:id', useAuth, deleteProduct)
 
 export default router
