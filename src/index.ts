@@ -10,9 +10,8 @@ import authRoutes from './routes/auth'
 import userRoutes from './routes/user'
 import categoryRoutes from './routes/category'
 import productRoutes from './routes/product'
+import ordersRoutes from './routes/order'
 import ticketRoutes from './routes/ticket'
-import { createInvoice } from './utils'
-import { INVOICE } from './constants'
 
 config()
 const app = express()
@@ -35,17 +34,21 @@ connect(
 
 // middlewares
 app.use('/uploads', express.static('uploads'))
-app.use('/documents', express.static('documents'))
+app.use('/invoices', express.static('invoices'))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
 
-//createInvoice(INVOICE)
-
 // route middleware
 app.use('/auth', authRoutes)
-app.use('/', [userRoutes, categoryRoutes, productRoutes, ticketRoutes])
+app.use('/', [
+  userRoutes,
+  categoryRoutes,
+  productRoutes,
+  ordersRoutes,
+  ticketRoutes,
+])
 
 app.listen(process.env.PORT, () => {
   console.log(`App started at port ${process.env.PORT}`)

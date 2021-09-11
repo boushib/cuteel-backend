@@ -1,71 +1,76 @@
 import { randomBytes } from 'crypto'
 import { createWriteStream, existsSync } from 'fs'
 import PDFKit from 'pdfkit'
-import {
-  Invoice,
-  InvoiceDate,
-  InvoiceHeader,
-  InvoiceItem,
-  ShippingAddress,
-} from '../types'
+import { uploadInvoiceToS3 } from '../middlewares'
+import { Order } from '../types'
 
-export const createInvoice = (invoice: Invoice, path?: string) => {
-  const doc = new PDFKit({ size: 'A4', margin: 40 })
+const INVOICE_FOOTER =
+  'Cuteel LTD  •  https://cuteel.com/  •  contact@cuteel.com'
 
-  createHeader(doc, invoice.header)
-  createCustomerInfo(
-    doc,
-    invoice.shippingAddress,
-    invoice.date,
-    invoice.orderNumber
-  )
-  createInvoiceTable(
-    doc,
-    invoice.items,
-    invoice.subtotal,
-    invoice.total,
-    invoice.currencySymbol
-  )
-  createFooter(doc, invoice.footer.text)
-
-  doc.end()
-  const filePath = path ?? `documents/${randomBytes(16).toString('hex')}.pdf`
-  doc.pipe(createWriteStream(filePath))
+const COMPANY = {
+  name: 'Cuteel',
+  address: 'Cuteel. 540 Gotham Street 34th floor LA, California',
 }
 
-const createHeader = (doc: PDFKit.PDFDocument, header: InvoiceHeader) => {
-  const { companyName, companyAddress } = header
+export const generateInvoice = async (order: Order, path?: string) => {
+  try {
+    const doc = new PDFKit({ size: 'A4', margin: 40 })
+
+    createHeader(doc, order)
+    createCustomerInfo(doc, order)
+    createInvoiceTable(doc, order)
+    createFooter(doc, INVOICE_FOOTER)
+    const filePath = path ?? `invoices/${randomBytes(16).toString('hex')}.pdf`
+    const tempFile = createWriteStream(filePath)
+    doc.pipe(tempFile)
+    doc.end()
+
+    return new Promise((resolve, reject) => {
+      tempFile.on('finish', async () => {
+        try {
+          const res = await uploadInvoiceToS3(filePath)
+          resolve(res)
+        } catch (error) {
+          reject(error)
+        }
+      })
+      tempFile.on('error', (error) => {
+        reject(error)
+      })
+    })
+  } catch (error) {
+    console.log('Error creating PDF: ', error)
+  }
+}
+
+const createHeader = (doc: PDFKit.PDFDocument, order: Order) => {
+  const { name, address } = COMPANY
   const companyLogo =
     __dirname.substring(0, __dirname.length - 9) + 'static/cuteel.png'
   if (existsSync(companyLogo)) {
     doc
       .image(companyLogo, 50, 45, { width: 50 })
       .fontSize(20)
-      .text(companyName, 110, 57)
+      .text(name, 110, 57)
       .moveDown()
   } else {
-    doc.fontSize(20).text(companyName, 50, 45).moveDown()
+    doc.fontSize(20).text(name, 50, 45).moveDown()
   }
 
-  if (companyAddress.length !== 0) {
-    createCompanyAddress(doc, companyAddress)
+  if (address.length !== 0) {
+    createCompanyAddress(doc, address)
   }
 }
 
-const createCustomerInfo = (
-  doc: PDFKit.PDFDocument,
-  shippingAddress: ShippingAddress,
-  date: InvoiceDate,
-  orderNumber: number
-) => {
+const createCustomerInfo = (doc: PDFKit.PDFDocument, order: Order) => {
   doc.fillColor('#444444').fontSize(20).text('Invoice', 50, 160)
 
   createHorizontalLine(doc, 185)
 
   const customerInformationTop = 200
 
-  const { name, address, city, state, country, postalCode } = shippingAddress
-  const { billingDate, dueDate } = date
+  const { name, address, city, state, country, postalCode } = order.shipping
+  const { billingDate, dueDate, orderNumber } = order
 
   doc
     .fontSize(10)
@@ -92,13 +97,7 @@ const createCustomerInfo = (
   createHorizontalLine(doc, 252)
 }
 
-const createInvoiceTable = (
-  doc: PDFKit.PDFDocument,
-  items: Array<InvoiceItem>,
-  subtotal: number,
-  total: number,
-  currencySymbol: string
-) => {
+const createInvoiceTable = (doc: PDFKit.PDFDocument, order: Order) => {
   let i
   const invoiceTableTop = 330
 
@@ -116,21 +115,23 @@ const createInvoiceTable = (
   createHorizontalLine(doc, invoiceTableTop + 20)
   doc.font('Helvetica')
 
+  const { items, currency, total, subtotal } = order
+
   for (i = 0; i < items.length; i++) {
     const item = items[i]
     const position = invoiceTableTop + (i + 1) * 30
     createTableRow(
       doc,
       position,
-      item.item,
+      item.name,
       item.description,
-      formatCurrency(item.price, currencySymbol),
+      formatCurrency(item.price, currency),
       item.quantity.toString(),
       formatCurrency(
         applyTaxIfAvailable(item.price, item.quantity, item.tax),
-        currencySymbol
+        currency
       ),
-      checkIfTaxAvailable(item.tax)
+      item.tax > 0 ? item.tax * 100 + '%' : '--'
     )
 
     createHorizontalLine(doc, position + 20)
@@ -142,17 +143,12 @@ const createInvoiceTable = (
     doc,
     subtotalPosition,
     'Subtotal',
-    formatCurrency(subtotal, currencySymbol)
+    formatCurrency(subtotal, currency)
   )
 
   const paidToDatePosition = subtotalPosition + 20
   doc.font('Helvetica-Bold')
-  totalTable(
-    doc,
-    paidToDatePosition,
-    'Total',
-    formatCurrency(total, currencySymbol)
-  )
+  totalTable(doc, paidToDatePosition, 'Total', formatCurrency(total, currency))
 }
 
 const createFooter = (doc: PDFKit.PDFDocument, footer: string) => {
@@ -211,22 +207,9 @@ const getTaxFromString = (s: string) => {
   return +s.replace(/[^0-9]/g, '')
 }
 
-const checkIfTaxAvailable = (taxAsString: string) => {
-  const tax = getTaxFromString(taxAsString)
-  if (Number.isNaN(tax) === false && tax <= 100 && tax > 0) {
-    return taxAsString
-  }
-  return '---'
-}
-
-const applyTaxIfAvailable = (
-  price: number,
-  quantity: number,
-  taxAsString: string
-) => {
-  const tax = getTaxFromString(taxAsString)
-  if (tax && tax <= 100) {
-    return price * quantity * (1 + tax / 100)
+const applyTaxIfAvailable = (price: number, quantity: number, tax: number) => {
+  if (tax && tax <= 1) {
+    return price * quantity * (1 + tax)
   }
   return price * quantity
 }
