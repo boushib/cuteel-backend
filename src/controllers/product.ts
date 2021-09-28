@@ -21,12 +21,13 @@ export const createProduct = (req: Request, res: Response) => {
   })
 }
 
-export const updateProduct = (req: Request, res: Response) => {
-  const image = req.file?.path
+export const updateProduct = (req: any, res: Response) => {
+  const image = req.file?.location
   const fieldsToUpdate = { ...req.body }
   if (image) fieldsToUpdate.image = image
+  console.log({ fieldsToUpdate })
   Object.keys(fieldsToUpdate).map((k) => {
-    if (!k) delete fieldsToUpdate[k]
+    if (!fieldsToUpdate[k]) delete fieldsToUpdate[k]
   })
   Product.findOneAndUpdate(
     { _id: req.params.id },
@@ -36,6 +37,7 @@ export const updateProduct = (req: Request, res: Response) => {
       if (error) {
         return res.status(400).json({ error })
       }
+      console.log({ product })
       return res.status(201).json({ product })
     }
   )
