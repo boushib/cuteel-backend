@@ -19,3 +19,12 @@ export const getCategories = (req: Request, res: Response) => {
     res.json({ categories })
   })
 }
+
+export const deleteCategory = (req: Request, res: Response) => {
+  Category.remove({ _id: req.params.id }, (error: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    res.json({ message: 'Category successfully deleted!' })
+  })
+}
