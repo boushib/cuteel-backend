@@ -11,6 +11,20 @@ export const createCategory = (req: Request, res: Response) => {
   })
 }
 
+export const updateCategory = (req: any, res: Response) => {
+  Category.findOneAndUpdate(
+    { _id: req.params.id },
+    req.body,
+    { new: true },
+    (error, category) => {
+      if (error) {
+        return res.status(400).json({ error })
+      }
+      return res.status(201).json({ category })
+    }
+  )
+}
+
 export const getCategories = (req: Request, res: Response) => {
   Category.find((error, categories) => {
     if (error) {
