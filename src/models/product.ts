@@ -33,6 +33,10 @@ const productSchema = new Schema(
       trim: true,
       required: true,
     },
+    discount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 )

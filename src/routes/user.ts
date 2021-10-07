@@ -5,13 +5,13 @@ import {
   getCustomers,
   updateUser,
 } from '../controllers/user'
-import { upload, useAuth } from '../middlewares'
+import { uploadAvatarToS3, useAuth } from '../middlewares'
 
 const router = Router()
 
 router.get('/users', getUsers)
 router.get('/customers', getCustomers)
 router.get('/users/:id', getUserById)
-router.put('/users/:id', useAuth, upload.single('avatar'), updateUser)
+router.put('/users/:id', useAuth, uploadAvatarToS3.single('avatar'), updateUser)
 
 export default router

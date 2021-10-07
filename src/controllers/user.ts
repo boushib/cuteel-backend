@@ -43,8 +43,8 @@ export const getCustomers = (req: Request, res: Response) => {
   })
 }
 
-export const updateUser = (req: Request, res: Response) => {
-  const avatar = req.file?.path
+export const updateUser = (req: any, res: Response) => {
+  const avatar = req.file?.location
   const fieldsToUpdate = { ...req.body }
   if (avatar) fieldsToUpdate.avatar = avatar
   Object.keys(fieldsToUpdate).map((k) => {

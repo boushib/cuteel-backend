@@ -25,6 +25,20 @@ const storage = multerS3({
   },
 })
 
+const avatarStorage = multerS3({
+  s3,
+  acl: 'public-read',
+  bucket: 'cuteel',
+  metadata: (req: Express.Request, file: Express.Multer.File, cb: any) => {
+    cb(null, { fieldName: file.fieldname })
+  },
+  key: (req: Express.Request, file: Express.Multer.File, cb: any) => {
+    const ext = file.mimetype.split('/')[1]
+    const filePath = `images/avatars/${randomBytes(16).toString('hex')}.${ext}`
+    cb(null, filePath)
+  },
+})
+
 export const uploadInvoiceToS3 = async (localPath: string) => {
   const path = `invoices/${randomBytes(16).toString('hex')}.pdf`
   const reqParams: PutObjectRequest = {
@@ -47,3 +61,4 @@ export const uploadInvoiceToS3 = async (localPath: string) => {
 }
 
 export const uploadImageToS3 = multer({ storage })
+export const uploadAvatarToS3 = multer({ storage: avatarStorage })
