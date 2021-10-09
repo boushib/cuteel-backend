@@ -44,12 +44,19 @@ export const updateProduct = (req: any, res: Response) => {
 }
 
 export const getProducts = (req: Request, res: Response) => {
-  const { q, categ } = req.query
-  if (categ) {
-    const categories = categ.toString().split(',')
+  const { q, categ, minPrice, maxPrice } = req.query
+  if (categ || minPrice || maxPrice) {
+    let categories: Array<string> = []
+    if (categ) {
+      categories = categ.toString().split(',')
+    }
     Product.find(
       {
-        category: { $in: categories },
+        category: categories.length > 0 ? { $in: categories } : { $nin: [] },
+        price: {
+          $gte: minPrice ?? 0,
+          $lt: maxPrice ?? 1000000,
+        },
       },
       (error: any, products: any) => {
         if (error) {
