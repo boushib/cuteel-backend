@@ -44,8 +44,22 @@ export const updateProduct = (req: any, res: Response) => {
 }
 
 export const getProducts = (req: Request, res: Response) => {
-  const { q } = req.query
-  console.log({ userId: req.user })
+  const { q, categ } = req.query
+  if (categ) {
+    const categories = categ.toString().split(',')
+    Product.find(
+      {
+        category: { $in: categories },
+      },
+      (error: any, products: any) => {
+        if (error) {
+          return res.status(400).json({ error })
+        }
+        return res.json({ products })
+      }
+    )
+    return
+  }
   if (q) {
     const regex = { $regex: q, $options: 'i' }
     Product.find(
