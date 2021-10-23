@@ -40,7 +40,7 @@ export const signin = (req: Request, res: Response) => {
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET!,
-      { expiresIn: '3d' }
+      { expiresIn: 14 * 24 * 3600 } // 14 days
     )
     res.cookie('token', token, {
       expires: new Date(Date.now() + 10800),
