@@ -5,6 +5,7 @@ import {
   getProduct,
   updateProduct,
   deleteProduct,
+  rateProduct,
 } from '../controllers/product'
 import { uploadImageToS3 } from '../middlewares'
 import { useAuth } from '../middlewares'
@@ -25,6 +26,8 @@ router.put(
   uploadImageToS3.single('image'),
   updateProduct
 )
+// router.put('/products/:id/rate', useAuth, rateProduct)
+router.put('/products/:id/rate', rateProduct)
 router.delete('/products/:id', useAuth, deleteProduct)
 
 export default router

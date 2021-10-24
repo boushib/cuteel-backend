@@ -43,6 +43,22 @@ export const updateProduct = (req: any, res: Response) => {
   )
 }
 
+export const rateProduct = (req: any, res: Response) => {
+  const { rating } = req.body
+  const ratingField = `rating.${rating}`
+  Product.findOneAndUpdate(
+    { _id: req.params.id },
+    { $inc: { [ratingField]: 1 } },
+    { new: true },
+    (error, product) => {
+      if (error) {
+        return res.status(400).json({ error })
+      }
+      return res.status(201).json({ product })
+    }
+  )
+}
+
 export const getProducts = (req: Request, res: Response) => {
   const { q, categ, minPrice, maxPrice } = req.query
   if (categ || minPrice || maxPrice) {
