@@ -46,6 +46,7 @@ export const updateProduct = (req: any, res: Response) => {
 export const rateProduct = (req: any, res: Response) => {
   const { rating } = req.body
   const ratingField = `rating.${rating}`
+  console.log(ratingField)
   Product.findOneAndUpdate(
     { _id: req.params.id },
     { $inc: { [ratingField]: 1 } },

@@ -12,6 +12,7 @@ import categoryRoutes from './routes/category'
 import productRoutes from './routes/product'
 import ordersRoutes from './routes/order'
 import ticketRoutes from './routes/ticket'
+import paymentRoutes from './routes/payment'
 
 config()
 const app = express()
@@ -48,6 +49,7 @@ app.use('/', [
   productRoutes,
   ordersRoutes,
   ticketRoutes,
+  paymentRoutes,
 ])
 
 app.listen(process.env.PORT, () => {
