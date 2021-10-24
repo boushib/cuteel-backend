@@ -106,7 +106,7 @@ const createInvoiceTable = (doc: PDFKit.PDFDocument, order: Order) => {
     doc,
     invoiceTableTop,
     'Item',
-    'Description',
+    // 'Description',
     'Unit Cost',
     'Quantity',
     'Total',
@@ -124,7 +124,7 @@ const createInvoiceTable = (doc: PDFKit.PDFDocument, order: Order) => {
       doc,
       position,
       item.name,
-      item.description,
+      // item.description,
       formatCurrency(item.price, currency),
       item.quantity.toString(),
       formatCurrency(
@@ -173,7 +173,7 @@ const createTableRow = (
   doc: PDFKit.PDFDocument,
   position: number,
   item: string,
-  description: string,
+  // description: string,
   unitCost: string,
   quantity: string,
   lineTotal: string,
@@ -182,7 +182,7 @@ const createTableRow = (
   doc
     .fontSize(10)
     .text(item, 50, position, { width: 100 })
-    .text(description.substring(0, 30) + '..', 160, position, { width: 160 })
+    // .text(description.substring(0, 30) + '..', 160, position, { width: 160 })
     .text(unitCost, 280, position, { width: 90, align: 'right' })
     .text(quantity, 335, position, { width: 90, align: 'right' })
     .text(lineTotal, 400, position, { width: 90, align: 'right' })
