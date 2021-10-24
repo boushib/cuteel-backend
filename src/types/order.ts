@@ -1,4 +1,5 @@
 export type Order = {
+  _id: string
   userId: string
   shipping: {
     name: string

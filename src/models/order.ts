@@ -12,6 +12,10 @@ const orderSchema = new Schema(
         type: String,
         required: true,
       },
+      email: {
+        type: String,
+        required: true,
+      },
       address: {
         type: String,
         required: true,
@@ -64,10 +68,6 @@ const orderSchema = new Schema(
       required: true,
     },
     total: {
-      type: Number,
-      required: true,
-    },
-    orderNumber: {
       type: Number,
       required: true,
     },

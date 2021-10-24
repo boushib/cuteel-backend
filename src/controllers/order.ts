@@ -1,15 +1,29 @@
 import { Request, Response } from 'express'
+import { ObjectID } from 'mongodb'
 import Order from '../models/order'
 import { generateOrder } from '../middlewares/order'
 import { generateInvoice } from '../utils'
 
 export const createOrder = async (req: Request, res: Response) => {
   const { currency, shipping, items } = req.body
-  const userId = req.user + ''
-  const orderObj = generateOrder({ userId, shipping, items, currency })
+  const orderId = new ObjectID()
+  const _id = orderId.toHexString()
+  const userId = `${req.user}`
+
+  const orderObj = generateOrder({
+    _id,
+    userId,
+    shipping,
+    items,
+    currency,
+  })
+
+  orderObj._id = _id
+
   const invoice = (await generateInvoice(orderObj)) as string
   orderObj.invoice = invoice
   const order = new Order(orderObj)
+  order._id = orderId
   order.save((error: any, order: any) => {
     if (error) {
       return res.status(400).json({ error })

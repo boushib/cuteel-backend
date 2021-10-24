@@ -1,6 +1,7 @@
 import { Order } from '../types'
 
 type GenerateOrderProps = {
+  _id: string
   userId: string
   currency?: string
   shipping: {
@@ -23,6 +24,7 @@ type GenerateOrderProps = {
 type GenerateOrder = (props: GenerateOrderProps) => Order
 
 export const generateOrder: GenerateOrder = ({
+  _id,
   userId,
   shipping,
   items,
@@ -40,6 +42,7 @@ export const generateOrder: GenerateOrder = ({
   const orderNumber = Math.floor(Math.random() * 1000000)
 
   return {
+    _id,
     userId,
     shipping,
     items,

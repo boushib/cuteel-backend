@@ -70,13 +70,13 @@ const createCustomerInfo = (doc: PDFKit.PDFDocument, order: Order) => {
   const customerInformationTop = 200
 
   const { name, address, city, state, country, postalCode } = order.shipping
-  const { billingDate, dueDate, orderNumber } = order
+  const { billingDate, dueDate, _id: orderId } = order
 
   doc
     .fontSize(10)
-    .text('Invoice Number:', 50, customerInformationTop)
+    .text('Invoice Id:', 50, customerInformationTop)
     .font('Helvetica-Bold')
-    .text(orderNumber.toString(), 150, customerInformationTop)
+    .text(orderId, 150, customerInformationTop)
     .font('Helvetica')
     .text('Billing Date:', 50, customerInformationTop + 15)
     .text(billingDate, 150, customerInformationTop + 15)
