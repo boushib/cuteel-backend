@@ -1,6 +1,6 @@
 # Cuteel
 
-This is the backend for _Cuteel_
+This is the backend for _Cuteel_, the final project for my Master / Engineering Degree. Built on top of `Node.js` using `Express.js` and `TypeScript`
 
 ## Dependencies
 
@@ -32,7 +32,7 @@ yarn
 Run the app in development mode.
 
 ```lang-none
-yarn start
+yarn dev
 ```
 
 ## Production
