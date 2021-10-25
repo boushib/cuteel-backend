@@ -12,6 +12,6 @@ const router = Router()
 router.post('/orders/create', useAuth, createOrder)
 router.get('/orders', useAuth, getOrders)
 router.get('/orders/:id', useAuth, getOrder)
-router.get('/userorders', useAuth, getUserOrders)
+router.get('/user-orders', useAuth, getUserOrders)
 
 export default router
