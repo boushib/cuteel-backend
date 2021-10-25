@@ -1,6 +1,6 @@
 # Cuteel
 
-This is the backend for _Cuteel_
+This is the backend for _Cuteel_, the final project for my Master / Engineering Degree.
 
 ## Dependencies
 
