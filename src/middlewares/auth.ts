@@ -13,6 +13,10 @@ export const useAuth = (req: Request, res: Response, next: Function) => {
     return res.status(401).json({ message: 'Not authenticated.' })
   }
 
-  req.user = decodedToken.userId
+  console.log(decodedToken)
+
+  const { userId, roles } = decodedToken
+
+  req.user = { userId, roles }
   next()
 }

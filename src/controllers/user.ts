@@ -62,3 +62,18 @@ export const updateUser = (req: any, res: Response) => {
     }
   )
 }
+
+export const deleteUser = (req: any, res: Response) => {
+  const { roles } = req.user as any
+  if (!roles.includes('admin')) {
+    return res
+      .status(401)
+      .json({ message: 'This action is only allowed for admin!' })
+  }
+  User.remove({ _id: req.params.id }, (error: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    res.status(201).json({ message: 'Product successfully deleted!' })
+  })
+}

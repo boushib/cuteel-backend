@@ -8,7 +8,7 @@ export const createOrder = async (req: Request, res: Response) => {
   const { currency, shipping, items } = req.body
   const orderId = new ObjectID()
   const _id = orderId.toHexString()
-  const userId = `${req.user}`
+  const { userId } = req.user as any
 
   const orderObj = generateOrder({
     _id,
@@ -42,7 +42,7 @@ export const getOrders = (req: Request, res: Response) => {
 }
 
 export const getUserOrders = (req: Request, res: Response) => {
-  const userId = req.user
+  const { userId } = req.user as any
   Order.find({ userId }, (error: any, orders: any) => {
     if (error) {
       return res.status(400).json({ error })

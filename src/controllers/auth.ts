@@ -21,7 +21,7 @@ export const signup = (req: Request, res: Response) => {
 
     // generate signed token with user id and secret
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, roles: user.roles },
       process.env.JWT_SECRET!,
       { expiresIn: 14 * 24 * 3600 } // 14 days
     )
@@ -53,7 +53,7 @@ export const signin = (req: Request, res: Response) => {
 
     // generate signed token with user id and secret
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, roles: user.roles },
       process.env.JWT_SECRET!,
       { expiresIn: 14 * 24 * 3600 } // 14 days
     )

@@ -35,7 +35,7 @@ export const getTickets = (req: Request, res: Response) => {
 }
 
 export const getUserTickets = (req: Request, res: Response) => {
-  const userId = req.user
+  const { userId } = req.user as any
   Ticket.find({ userId }, (error: any, tickets: any) => {
     if (error) {
       return res.status(400).json({ error })
