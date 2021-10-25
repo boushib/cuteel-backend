@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import Product from '../models/product'
 import io from 'socket.io-client'
+import { ObjectId } from 'mongodb'
 
 export const createProduct = (req: Request, res: Response) => {
   const { name, description, price, category, quantity } = req.body
@@ -66,10 +67,13 @@ export const getProducts = (req: Request, res: Response) => {
   const socket = io(process.env.SOCKET_IO_URL!)
   socket.on('connect', () => {
     socket.emit('notification', {
+      _id: new ObjectId().toHexString(),
       type: 'order',
       message: 'You got a new order!',
       date: new Date().toISOString(),
       url: '',
+      seen: false,
+      acted: false,
     })
   })
 

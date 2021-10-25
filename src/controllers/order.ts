@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
-import { ObjectID } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import Order from '../models/order'
 import { generateOrder } from '../middlewares/order'
 import { generateInvoice } from '../utils'
 
 export const createOrder = async (req: Request, res: Response) => {
   const { currency, shipping, items } = req.body
-  const orderId = new ObjectID()
+  const orderId = new ObjectId()
   const _id = orderId.toHexString()
   const { userId } = req.user as any
 
