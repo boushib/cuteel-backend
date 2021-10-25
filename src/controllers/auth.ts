@@ -70,6 +70,44 @@ export const signin = (req: Request, res: Response) => {
   })
 }
 
+export const adminSignin = (req: Request, res: Response) => {
+  const { email, password } = req.body
+  User.findOne({ email }, (err: any, user: any) => {
+    if (err || !user) {
+      return res
+        .status(400)
+        .json({ error: 'User with this email does not exist' })
+    }
+
+    if (!user.roles.includes('admin')) {
+      return res
+        .status(401)
+        .json({ error: 'Please login with an admin account!' })
+    }
+
+    if (!user.authenticate(password)) {
+      return res.status(401).json({ error: 'Email & password do not match!' })
+    }
+
+    // generate signed token with user id and secret
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, roles: user.roles },
+      process.env.JWT_SECRET!,
+      { expiresIn: 14 * 24 * 3600 } // 14 days
+    )
+    res.cookie('token', token, {
+      expires: new Date(Date.now() + 10800),
+      httpOnly: true,
+      // secure: true // https
+    })
+    const { _id, name, email, roles, avatar, createdAt, updatedAt } = user
+    res.json({
+      user: { _id, name, email, avatar, roles, createdAt, updatedAt },
+      token,
+    })
+  })
+}
+
 export const signout = (req: Request, res: Response) => {
   res.clearCookie('token')
   res.json({ message: 'Signed Out Successfully!' })
