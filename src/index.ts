@@ -16,22 +16,13 @@ import paymentRoutes from './routes/payment'
 
 config()
 const app = express()
-connect(
-  process.env.DATABASE_URL!,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  },
-  (error) => {
-    if (error) {
-      console.log('Error connecting to MongoDB')
-    } else {
-      console.log('Connected  successfully to MongoDB!')
-    }
+connect(process.env.DATABASE_URL!, {}, (error) => {
+  if (error) {
+    console.log('Error connecting to MongoDB')
+  } else {
+    console.log('Connected  successfully to MongoDB!')
   }
-)
+})
 
 // middlewares
 app.use('/uploads', express.static('uploads'))
