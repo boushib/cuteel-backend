@@ -19,7 +19,22 @@ export const signup = (req: Request, res: Response) => {
       return res.status(400).json({ error })
     }
 
-    res.status(201).json({ user })
+    // generate signed token with user id and secret
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET!,
+      { expiresIn: 14 * 24 * 3600 } // 14 days
+    )
+    res.cookie('token', token, {
+      expires: new Date(Date.now() + 10800),
+      httpOnly: true,
+      // secure: true // https
+    })
+    const { _id, name, email, roles, avatar, createdAt, updatedAt } = user
+    res.status(201).json({
+      user: { _id, name, email, avatar, roles, createdAt, updatedAt },
+      token,
+    })
   })
 }
 
