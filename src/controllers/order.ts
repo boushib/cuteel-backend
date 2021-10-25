@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
-import { ObjectId } from 'mongodb'
 import Order from '../models/order'
 import { generateOrder } from '../middlewares/order'
 import { generateInvoice } from '../utils'
+import io from 'socket.io-client'
+import { ObjectId } from 'mongodb'
 
 export const createOrder = async (req: Request, res: Response) => {
   const { currency, shipping, items } = req.body
@@ -24,10 +25,26 @@ export const createOrder = async (req: Request, res: Response) => {
   orderObj.invoice = invoice
   const order = new Order(orderObj)
   order._id = orderId
+
   order.save((error: any, order: any) => {
     if (error) {
       return res.status(400).json({ error })
     }
+
+    // send notification to the admin dashboard
+    const socket = io(process.env.SOCKET_IO_URL!)
+    socket.on('connect', () => {
+      socket.emit('notification', {
+        _id: new ObjectId().toHexString(),
+        type: 'order',
+        message: 'You got a new order!',
+        date: new Date().toISOString(),
+        url: `/dashboard/orders/${order._id}`,
+        seen: false,
+        acted: false,
+      })
+    })
+
     res.status(201).json({ order })
   })
 }
