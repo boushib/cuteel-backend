@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import { createWriteStream, existsSync } from 'fs'
 import PDFKit from 'pdfkit'
+import { formatDate } from '.'
 import { uploadInvoiceToS3 } from '../middlewares'
 import { Order } from '../types'
 
@@ -72,6 +73,9 @@ const createCustomerInfo = (doc: PDFKit.PDFDocument, order: Order) => {
   const { name, address, city, state, country, postalCode } = order.shipping
   const { billingDate, dueDate, _id: orderId } = order
 
+  const formattedBillingDate = formatDate(billingDate)
+  const formattedDueDate = formatDate(dueDate)
+
   doc
     .fontSize(10)
     .text('Invoice Id:', 50, customerInformationTop)
@@ -79,9 +83,9 @@ const createCustomerInfo = (doc: PDFKit.PDFDocument, order: Order) => {
     .text(orderId, 150, customerInformationTop)
     .font('Helvetica')
     .text('Billing Date:', 50, customerInformationTop + 15)
-    .text(billingDate, 150, customerInformationTop + 15)
+    .text(formattedBillingDate, 150, customerInformationTop + 15)
     .text('Due Date:', 50, customerInformationTop + 30)
-    .text(dueDate, 150, customerInformationTop + 30)
+    .text(formattedDueDate, 150, customerInformationTop + 30)
 
     .font('Helvetica-Bold')
     .text(name, 300, customerInformationTop)
