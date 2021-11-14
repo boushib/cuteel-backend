@@ -25,7 +25,6 @@ export const updateProduct = (req: any, res: Response) => {
   const image = req.file?.location
   const fieldsToUpdate = { ...req.body }
   if (image) fieldsToUpdate.image = image
-  console.log({ fieldsToUpdate })
   Object.keys(fieldsToUpdate).map((k) => {
     if (!fieldsToUpdate[k]) delete fieldsToUpdate[k]
   })
