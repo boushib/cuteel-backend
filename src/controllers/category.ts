@@ -34,6 +34,19 @@ export const getCategories = (req: Request, res: Response) => {
   })
 }
 
+export const getCategory = (req: Request, res: Response) => {
+  const { id } = req.params
+  Category.findById(id, (error: any, category: any) => {
+    if (error) {
+      return res.status(400).json({ error })
+    }
+    if (!category) {
+      return res.status(404).json({ error: 'This category might not exist!' })
+    }
+    res.json({ category })
+  })
+}
+
 export const deleteCategory = (req: Request, res: Response) => {
   Category.remove({ _id: req.params.id }, (error: any) => {
     if (error) {
